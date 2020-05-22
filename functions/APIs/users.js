@@ -99,3 +99,4 @@ exports.signUpUser = (request, response) => {
 			}
 		});
 };
+
