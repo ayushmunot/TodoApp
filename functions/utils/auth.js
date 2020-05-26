@@ -9,8 +9,7 @@ module.exports = (request, response, next) => {
         return response.status(403).json({error: 'Unauthorized'});
     }
     admin
-        .auth()
-        .verifyIdToken(idToken)
+        .auth().verifyIdToken(idToken)
         .then((decodedToken) => {
             request.user = decodedToken;
             return db.collection('users').where('userId', '==', request.user.uid).limit(1).get();
