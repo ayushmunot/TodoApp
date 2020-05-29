@@ -2,6 +2,7 @@ const {db} = require('../utils/admin');
 exports.getAllTodos = (request, response) => {
     db
         .collection('todos')
+        .where('username', '==', request.user.username)
         .orderBy('createdAt', 'desc')
         .get()
         .then((data) => {
@@ -30,6 +31,7 @@ exports.getAllTodos = (request, response) => {
             return response.status(400).json({title: 'Must not be empty'});
         }
         const newTodoItem = {
+            username: request.user.username,
             title: request.body.title,
             body: request.body.body,
             createdAt: new Date().toISOString()
@@ -55,6 +57,9 @@ exports.getAllTodos = (request, response) => {
             .then((doc) => {
                 if (!doc.exists) {
                     return response.status(404).json({error: 'Todo not found'})
+                }
+                if (doc.data().username !== request.user.username) {
+                    return response.status(403).json({error: "Unauthorized"})
                 }
                 return document.delete();
             })
